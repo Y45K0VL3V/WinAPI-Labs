@@ -7,7 +7,6 @@
 #include "MoveableRectangle.h"
 
 #define MAX_LOADSTRING 100
-#define MOVE_TIMER 1;
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
@@ -86,6 +85,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassExW(&wcex);
 }
 
+const int MOVE_TIMER = 1;
+
 RECT WindowRect;
 MoveableRectangle MoveRect(10,10,150,150);
 MoveDirection PreviousDirection;
@@ -118,12 +119,27 @@ BOOL CheckOutBorderMove(LPRECT rectangle, LONG* xChange, LONG* yChange)
     return (*xChange != oldXChange || *yChange != oldYChange);
 }
 
-void MoveRectangle(HWND hWnd, LPRECT rectangle, LONG xChange, LONG yChange)
+VOID MoveRectangle(HWND hWnd, LPRECT rectangle, LONG xChange, LONG yChange)
 {
     CheckOutBorderMove(rectangle, &xChange, &yChange);
 
     OffsetRect(rectangle, xChange, yChange);
     InvalidateRect(hWnd, NULL, TRUE);
+}
+
+BOOL IsTimerStopped = TRUE;
+VOID InvertTimerState(HWND hWnd, int timerId)
+{
+    if (IsTimerStopped)
+    {
+        SetTimer(hWnd, timerId, 1, NULL);
+        IsTimerStopped = FALSE;
+    }
+    else
+    {
+        KillTimer(hWnd, timerId);
+        IsTimerStopped = TRUE;
+    }
 }
 
 //
@@ -152,7 +168,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     UpdateWindow(hWnd);
 
     GetClientRect(hWnd, &WindowRect);
-    int nTimerId = SetTimer(hWnd, 1, 1, NULL);
+    InvertTimerState(hWnd, MOVE_TIMER);
 
     return TRUE;
 }
@@ -246,22 +262,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             MoveRectangle(hWnd, &MoveRect.RectObject, 0, 10);
             break;
 
-        // Decrease horizontal direction.
+        // Left horizontal direction.
         case VK_NUMPAD4:
-            MoveRect.Direction.HorizontalDirection = static_cast<HorizontalDirectionType>(static_cast<char>(MoveRect.Direction.HorizontalDirection) - 1);
+            MoveRect.Direction.HorizontalDirection = HorizontalDirectionType::Left;
             break;
-        // Increase horizontal direction.
+        // Right horizontal direction.
         case VK_NUMPAD6:
-            MoveRect.Direction.HorizontalDirection = static_cast<HorizontalDirectionType>(static_cast<char>(MoveRect.Direction.HorizontalDirection) + 1);
+            MoveRect.Direction.HorizontalDirection = HorizontalDirectionType::Right;
             break;
-        // Decrease vertical direction.
+        // Down vertical direction.
         case VK_NUMPAD2:
-            MoveRect.Direction.VerticalDirection = static_cast<VerticalDirectionType>(static_cast<char>(MoveRect.Direction.VerticalDirection) + 1);
+            MoveRect.Direction.VerticalDirection = VerticalDirectionType::Down;
             break;
-        // Increase vertical direction.
+        // Up vertical direction.
         case VK_NUMPAD8:
-            MoveRect.Direction.VerticalDirection = static_cast<VerticalDirectionType>(static_cast<char>(MoveRect.Direction.VerticalDirection) - 1);
+            MoveRect.Direction.VerticalDirection = VerticalDirectionType::Up;
             break;
+
+        // Clear direction.
+        case VK_NUMPAD5:
+        {
+            MoveRect.Direction.VerticalDirection = VerticalDirectionType::None;
+            MoveRect.Direction.HorizontalDirection = HorizontalDirectionType::None;
+            break;
+        }
 
         // Increase speed.
         case VK_ADD:
@@ -271,14 +295,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case VK_SUBTRACT:
             MoveRect.ChangeSpeed(-1);
             break;
+        case VK_BACK:
+            MoveRect.ChangeSpeed(MoveRect.GetSpeed() * -1);
 
         // Pause rect moving.
         case VK_SPACE:
         {
-            MoveDirection temp = MoveRect.Direction;
-            MoveRect.Direction = PreviousDirection;
-            PreviousDirection = temp;
-
+            InvertTimerState(hWnd, MOVE_TIMER);
             break;
         }
         default:
@@ -309,6 +332,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_SIZE:
     {
         GetClientRect(hWnd, &WindowRect);
+        MoveRectangle(hWnd, &MoveRect.RectObject, 0, 0);
     }
     break;
     default:
