@@ -1,2 +1,3 @@
-﻿  MoveableRectangle.cpp
+﻿  OsispLab1.cpp
+C:\Учёба\OSISP\OsispLab1\OsispLab1\OsispLab1.cpp(155,18): warning C4244: 'initializing': conversion from 'UINT_PTR' to 'int', possible loss of data
   OsispLab1.vcxproj -> C:\Учёба\OSISP\OsispLab1\x64\Debug\OsispLab1.exe

@@ -30,11 +30,18 @@ class MoveableRectangle
 		RECT RectObject;
 		MoveDirection Direction;
 
-		char ChangeXSpeed(char dx);
-		char ChangeYSpeed(char dy);
+		void ChangeSpeed(char offset);
+
+		char GetSpeed() { return _rectSpeed; }
+
+		char GetXVectorSpeed() { return _rectSpeed * static_cast<char>(Direction.HorizontalDirection); }
+		char GetYVectorSpeed() { return _rectSpeed * static_cast<char>(Direction.VerticalDirection); }
+
+		const char MAX_SPEED = 100;
+		const char MIN_SPEED = 0;
 
 	private:
-		char _rectXSpeed = 0;
-		char _rectYSpeed = 0;
+		char GetNewSpeed(char oldSpeed, char speedChangeValue);
+		char _rectSpeed = 0;
 
 };

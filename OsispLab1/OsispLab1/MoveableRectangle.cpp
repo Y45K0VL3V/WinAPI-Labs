@@ -8,24 +8,17 @@ MoveableRectangle::MoveableRectangle(LONG leftPos, LONG topPos, LONG rightPos, L
 	RectObject.bottom = bottomPos;
 }
 
-BOOL IsNewSpeedValid(char oldSpeed, char speedChangeValue)
+char MoveableRectangle::GetNewSpeed(char oldSpeed, char speedChangeValue)
 {
 	short newSpeed = oldSpeed + speedChangeValue;
-	return (newSpeed <= 100 && newSpeed >= 0);
+	
+	if (newSpeed > MAX_SPEED) return MAX_SPEED;
+	if (newSpeed < MIN_SPEED) return MIN_SPEED;
+	
+	return newSpeed;
 }
 
-char MoveableRectangle::ChangeXSpeed(char dx)
+void MoveableRectangle::ChangeSpeed(char offset)
 {
-	if (IsNewSpeedValid(_rectYSpeed, dx))
-		_rectYSpeed += dx;
-
-	return _rectYSpeed;
-}
-
-char MoveableRectangle::ChangeYSpeed(char dy)
-{
-	if (IsNewSpeedValid(_rectYSpeed, dy))
-		_rectYSpeed += dy;
-
-	return _rectYSpeed;
+	_rectSpeed = GetNewSpeed(_rectSpeed, offset);
 }

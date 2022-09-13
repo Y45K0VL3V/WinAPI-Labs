@@ -86,49 +86,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassExW(&wcex);
 }
 
-//enum VerticalDirection
-//{
-//    Up = -1,
-//    Down = 1,
-//};
-//
-//enum HorizontalDirection
-//{
-//    Left = -1,
-//    Right = 1,
-//};
-//
-//struct MoveDirection {
-//
-//};
-
 RECT WindowRect;
 MoveableRectangle MoveRect(10,10,150,150);
-
-//BOOL IsNewSpeedValid(signed char oldSpeed, signed short speedChangeValue)
-//{
-//    signed newSpeed = oldSpeed + speedChangeValue;
-//    return (newSpeed <= 100 && newSpeed >= 0);
-//}
-
-//signed char RectXSpeed = 0;
-//signed char ChangeXSpeed(signed short dx)
-//{
-//    if (IsNewSpeedValid(RectXSpeed, dx))
-//        RectXSpeed += dx;
-//    
-//    return RectXSpeed;
-//}
-//
-//signed char RectYSpeed = 0;
-//signed char ChangeYSpeed(signed short dy)
-//{
-//    if (IsNewSpeedValid(RectYSpeed, dy))
-//        RectYSpeed += dy;
-//
-//    return RectYSpeed;
-//}
-
+MoveDirection PreviousDirection;
 
 POINT CurrCursorPos;
 BOOL IsRectCaptured = FALSE;
@@ -150,8 +110,10 @@ BOOL CheckOutBorderMove(LPRECT rectangle, LONG* xChange, LONG* yChange)
     if (rectangle->right + *xChange >= WindowRect.right)
         *xChange = WindowRect.right - rectangle->right;
 
-    //if (*xChange != oldXChange) ChangeXSpeed(-2 * RectXSpeed);
-    //if (*yChange != oldYChange) ChangeYSpeed(-2 * RectYSpeed);
+    if (*xChange != oldXChange) 
+        MoveRect.Direction.HorizontalDirection = static_cast<HorizontalDirectionType>(static_cast<char>(MoveRect.Direction.HorizontalDirection) * -1);
+    if (*yChange != oldYChange) 
+        MoveRect.Direction.VerticalDirection = static_cast<VerticalDirectionType>(static_cast<char>(MoveRect.Direction.VerticalDirection) * -1);
 
     return (*xChange != oldXChange || *yChange != oldYChange);
 }
@@ -234,7 +196,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hWnd, &ps);
 
             FillRect(hdc, &MoveRect.RectObject, (HBRUSH)CreateSolidBrush(RGB(235,125,64)));
-            //Graphics::DrawImage();
 
             // TODO: Add any drawing code that uses hdc here...
             EndPaint(hWnd, &ps);
@@ -285,24 +246,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             MoveRectangle(hWnd, &MoveRect.RectObject, 0, 10);
             break;
 
-        //// Decrease horizontal speed.
-        //case VK_NUMPAD4:
-        //    ChangeXSpeed(-2);
-        //    break;
-        //// Increase horizontal speed.
-        //case VK_NUMPAD6:
-        //    ChangeXSpeed(2);
-        //    break;
-        //// Decrease vertical speed.
-        //case VK_NUMPAD2:
-        //    ChangeYSpeed(-2);
-        //    break;
-        //// Increase vertical speed.
-        //case VK_NUMPAD8:
-        //    ChangeYSpeed(2);
-        //    break;
-        case VK_SPACE:
+        // Decrease horizontal direction.
+        case VK_NUMPAD4:
+            MoveRect.Direction.HorizontalDirection = static_cast<HorizontalDirectionType>(static_cast<char>(MoveRect.Direction.HorizontalDirection) - 1);
             break;
+        // Increase horizontal direction.
+        case VK_NUMPAD6:
+            MoveRect.Direction.HorizontalDirection = static_cast<HorizontalDirectionType>(static_cast<char>(MoveRect.Direction.HorizontalDirection) + 1);
+            break;
+        // Decrease vertical direction.
+        case VK_NUMPAD2:
+            MoveRect.Direction.VerticalDirection = static_cast<VerticalDirectionType>(static_cast<char>(MoveRect.Direction.VerticalDirection) + 1);
+            break;
+        // Increase vertical direction.
+        case VK_NUMPAD8:
+            MoveRect.Direction.VerticalDirection = static_cast<VerticalDirectionType>(static_cast<char>(MoveRect.Direction.VerticalDirection) - 1);
+            break;
+
+        // Increase speed.
+        case VK_ADD:
+            MoveRect.ChangeSpeed(1);
+            break;
+        // Decrease speed.
+        case VK_SUBTRACT:
+            MoveRect.ChangeSpeed(-1);
+            break;
+
+        // Pause rect moving.
+        case VK_SPACE:
+        {
+            MoveDirection temp = MoveRect.Direction;
+            MoveRect.Direction = PreviousDirection;
+            PreviousDirection = temp;
+
+            break;
+        }
         default:
             break;
         }
@@ -325,7 +303,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     case WM_TIMER:
     {
-        //MoveRectangle(hWnd, &MoveRect, RectXSpeed, RectYSpeed);
+        MoveRectangle(hWnd, &MoveRect.RectObject, MoveRect.GetXVectorSpeed(), MoveRect.GetYVectorSpeed());
     }
     break;
     case WM_SIZE:
