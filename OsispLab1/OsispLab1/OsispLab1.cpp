@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "OsispLab1.h"
 #include "windowsx.h"
+#include "MoveableRectangle.h"
 
 #define MAX_LOADSTRING 100
 #define MOVE_TIMER 1;
@@ -85,32 +86,48 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassExW(&wcex);
 }
 
+//enum VerticalDirection
+//{
+//    Up = -1,
+//    Down = 1,
+//};
+//
+//enum HorizontalDirection
+//{
+//    Left = -1,
+//    Right = 1,
+//};
+//
+//struct MoveDirection {
+//
+//};
+
 RECT WindowRect;
-RECT MoveableRect;
+MoveableRectangle MoveRect(10,10,150,150);
 
-BOOL IsNewSpeedValid(signed char oldSpeed, signed short speedChangeValue)
-{
-    signed newSpeed = oldSpeed + speedChangeValue;
-    return (newSpeed <= 127 && newSpeed >= -127);
-}
+//BOOL IsNewSpeedValid(signed char oldSpeed, signed short speedChangeValue)
+//{
+//    signed newSpeed = oldSpeed + speedChangeValue;
+//    return (newSpeed <= 100 && newSpeed >= 0);
+//}
 
-signed char RectXSpeed = 0;
-signed char ChangeXSpeed(signed short dx)
-{
-    if (IsNewSpeedValid(RectXSpeed, dx))
-        RectXSpeed += dx;
-
-    return RectXSpeed;
-}
-
-signed char RectYSpeed = 0;
-signed char ChangeYSpeed(signed short dy)
-{
-    if (IsNewSpeedValid(RectYSpeed, dy))
-        RectYSpeed += dy;
-
-    return RectYSpeed;
-}
+//signed char RectXSpeed = 0;
+//signed char ChangeXSpeed(signed short dx)
+//{
+//    if (IsNewSpeedValid(RectXSpeed, dx))
+//        RectXSpeed += dx;
+//    
+//    return RectXSpeed;
+//}
+//
+//signed char RectYSpeed = 0;
+//signed char ChangeYSpeed(signed short dy)
+//{
+//    if (IsNewSpeedValid(RectYSpeed, dy))
+//        RectYSpeed += dy;
+//
+//    return RectYSpeed;
+//}
 
 
 POINT CurrCursorPos;
@@ -133,8 +150,8 @@ BOOL CheckOutBorderMove(LPRECT rectangle, LONG* xChange, LONG* yChange)
     if (rectangle->right + *xChange >= WindowRect.right)
         *xChange = WindowRect.right - rectangle->right;
 
-    if (*xChange != oldXChange) ChangeXSpeed(-2 * RectXSpeed);
-    if (*yChange != oldYChange) ChangeYSpeed(-2 * RectYSpeed);
+    //if (*xChange != oldXChange) ChangeXSpeed(-2 * RectXSpeed);
+    //if (*yChange != oldYChange) ChangeYSpeed(-2 * RectYSpeed);
 
     return (*xChange != oldXChange || *yChange != oldYChange);
 }
@@ -159,11 +176,6 @@ void MoveRectangle(HWND hWnd, LPRECT rectangle, LONG xChange, LONG yChange)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-    MoveableRect.top = 10;
-    MoveableRect.left = 10;
-    MoveableRect.right = 300;
-    MoveableRect.bottom = 300;
-
     hInst = hInstance; // Store instance handle in our global variable
 
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
@@ -221,7 +233,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
 
-            FillRect(hdc, &MoveableRect, (HBRUSH)CreateSolidBrush(RGB(235,125,64)));
+            FillRect(hdc, &MoveRect.RectObject, (HBRUSH)CreateSolidBrush(RGB(235,125,64)));
             //Graphics::DrawImage();
 
             // TODO: Add any drawing code that uses hdc here...
@@ -232,8 +244,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONDOWN:
     {
         CurrCursorPos = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-        if ((CurrCursorPos.x >= MoveableRect.left && CurrCursorPos.x <= MoveableRect.right) &&
-            (CurrCursorPos.y >= MoveableRect.top && CurrCursorPos.y <= MoveableRect.bottom))
+        if ((CurrCursorPos.x >= MoveRect.RectObject.left && CurrCursorPos.x <= MoveRect.RectObject.right) &&
+            (CurrCursorPos.y >= MoveRect.RectObject.top && CurrCursorPos.y <= MoveRect.RectObject.bottom))
             IsRectCaptured = TRUE;
     }
     break;
@@ -245,7 +257,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             GetCursorPos(&CurrCursorPos);
             ScreenToClient(FindWindowA(NULL, "OsispLab1"), &CurrCursorPos);
 
-            MoveRectangle(hWnd, &MoveableRect, CurrCursorPos.x - prevPoint.x, CurrCursorPos.y - prevPoint.y);
+            MoveRectangle(hWnd, &MoveRect.RectObject, CurrCursorPos.x - prevPoint.x, CurrCursorPos.y - prevPoint.y);
         }
     }
     break;
@@ -258,21 +270,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         switch (wParam) {
         case VK_LEFT:
-            MoveRectangle(hWnd, &MoveableRect, -10, 0);
+            MoveRectangle(hWnd, &MoveRect.RectObject, -10, 0);
             break;
 
         case VK_RIGHT:
-            MoveRectangle(hWnd, &MoveableRect, 10, 0);
+            MoveRectangle(hWnd, &MoveRect.RectObject, 10, 0);
             break;
 
         case VK_UP:
-            MoveRectangle(hWnd, &MoveableRect, 0, -10);
+            MoveRectangle(hWnd, &MoveRect.RectObject, 0, -10);
             break;
 
         case VK_DOWN:
-            MoveRectangle(hWnd, &MoveableRect, 0, 10);
+            MoveRectangle(hWnd, &MoveRect.RectObject, 0, 10);
             break;
 
+        //// Decrease horizontal speed.
+        //case VK_NUMPAD4:
+        //    ChangeXSpeed(-2);
+        //    break;
+        //// Increase horizontal speed.
+        //case VK_NUMPAD6:
+        //    ChangeXSpeed(2);
+        //    break;
+        //// Decrease vertical speed.
+        //case VK_NUMPAD2:
+        //    ChangeYSpeed(-2);
+        //    break;
+        //// Increase vertical speed.
+        //case VK_NUMPAD8:
+        //    ChangeYSpeed(2);
+        //    break;
         case VK_SPACE:
             break;
         default:
@@ -285,9 +313,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         BOOL isShiftPressed = (BOOL)GetAsyncKeyState(VK_SHIFT);
 
         if(!isShiftPressed)
-            ((short)HIWORD(wParam) < 0) ? MoveRectangle(hWnd, &MoveableRect, 0, 10) : MoveRectangle(hWnd, &MoveableRect, 0, -10);
+            ((short)HIWORD(wParam) < 0) ? MoveRectangle(hWnd, &MoveRect.RectObject, 0, 10) : MoveRectangle(hWnd, &MoveRect.RectObject, 0, -10);
         else
-            ((short)HIWORD(wParam) < 0) ? MoveRectangle(hWnd, &MoveableRect, -10, 0) : MoveRectangle(hWnd, &MoveableRect, 10, 0);
+            ((short)HIWORD(wParam) < 0) ? MoveRectangle(hWnd, &MoveRect.RectObject, -10, 0) : MoveRectangle(hWnd, &MoveRect.RectObject, 10, 0);
     }
     break;
     case WM_DESTROY:
@@ -297,7 +325,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     case WM_TIMER:
     {
-        MoveRectangle(hWnd, &MoveableRect, RectXSpeed, RectYSpeed);
+        //MoveRectangle(hWnd, &MoveRect, RectXSpeed, RectYSpeed);
     }
     break;
     case WM_SIZE:

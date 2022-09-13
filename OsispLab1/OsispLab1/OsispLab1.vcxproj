@@ -128,12 +128,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="MoveableRectangle.h" />
     <ClInclude Include="OsispLab1.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OsispLab1.cpp" />
+    <ClCompile Include="MoveableRectangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OsispLab1.rc" />
