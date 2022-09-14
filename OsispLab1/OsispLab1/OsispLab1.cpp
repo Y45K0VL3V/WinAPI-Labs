@@ -90,6 +90,33 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 const int MOVE_TIMER = 1;
 
+#pragma region Double bufferization
+
+HDC HdcBuffer;
+HANDLE HandleBuffer;
+
+VOID InitializeBuffer(HWND hWnd, int width, int height)
+{
+    HDC hdcWindow;
+    hdcWindow = GetDC(hWnd);
+    HdcBuffer = CreateCompatibleDC(hdcWindow);
+    HandleBuffer = CreateCompatibleBitmap(hdcWindow, width, height);
+    SaveDC(HdcBuffer);
+    SelectObject(HdcBuffer, HandleBuffer);
+    ReleaseDC(hWnd, hdcWindow);
+}
+
+VOID FinalizeBuffer()
+{
+    if (HdcBuffer)
+    {
+        RestoreDC(HdcBuffer, -1);
+        DeleteObject(HandleBuffer);
+        DeleteObject(HdcBuffer);
+    }
+}
+#pragma endregion
+
 RECT WindowRect;
 
 MoveableRectangle MoveRect(10,10,300,300);
@@ -132,7 +159,7 @@ VOID MoveRectangle(HWND hWnd, LPRECT rectangle, LONG xChange, LONG yChange)
     CheckOutBorderMove(rectangle, &xChange, &yChange);
 
     OffsetRect(rectangle, xChange, yChange);
-    InvalidateRect(hWnd, NULL, TRUE);
+    InvalidateRect(hWnd, NULL, FALSE);
 }
 
 BOOL IsTimerStopped = TRUE;
@@ -183,23 +210,23 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 VOID DrawObject(HWND hWnd)
 {
-    PAINTSTRUCT ps;
-    HDC hdc = BeginPaint(hWnd, &ps);
+    HBRUSH brushWindow = CreateSolidBrush(RGB(255,255,255));
+    FillRect(HdcBuffer, &WindowRect, brushWindow);
 
     if (IsRectShow)
     {
         HBRUSH brush = CreateSolidBrush(RGB(235, 125, 64));
-        FillRect(hdc, &MoveRect.RectObject, brush);
+        FillRect(HdcBuffer, &MoveRect.RectObject, brush);
         DeleteObject(brush);
     }
     else
     {
-        HDC hMemDc = CreateCompatibleDC(hdc);
+        HDC hMemDc = CreateCompatibleDC(HdcBuffer);
         HBITMAP hBmp = (HBITMAP)SelectObject(hMemDc, RectanglePictureHandler);
         if (hBmp)
         {
-            SetMapMode(hMemDc, GetMapMode(hdc));
-            TransparentBlt(hdc, MoveRect.RectObject.left, MoveRect.RectObject.top,
+            SetMapMode(hMemDc, GetMapMode(HdcBuffer));
+            TransparentBlt(HdcBuffer, MoveRect.RectObject.left, MoveRect.RectObject.top,
                 MoveRect.RectObject.right - MoveRect.RectObject.left, MoveRect.RectObject.bottom - MoveRect.RectObject.top,
                 hMemDc, 0, 0, RectangleBmp.bmWidth, RectangleBmp.bmHeight, RGB(255, 255, 255));
             SelectObject(hMemDc, hBmp);
@@ -208,7 +235,9 @@ VOID DrawObject(HWND hWnd)
         DeleteDC(hMemDc);
     }
 
-    // TODO: Add any drawing code that uses hdc here...
+    PAINTSTRUCT ps;
+    HDC hdc = BeginPaint(hWnd, &ps);
+    BitBlt(hdc, 0, 0, WindowRect.right, WindowRect.bottom, HdcBuffer, 0, 0, SRCCOPY);
     EndPaint(hWnd, &ps);
 }
 
@@ -363,6 +392,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     break;
     case WM_DESTROY:
     {
+        FinalizeBuffer();
         PostQuitMessage(0);
         break;
     }
@@ -374,6 +404,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_SIZE:
     {
         GetClientRect(hWnd, &WindowRect);
+        FinalizeBuffer();
+        InitializeBuffer(hWnd, WindowRect.right - WindowRect.left, WindowRect.bottom - WindowRect.top);
         MoveRectangle(hWnd, &MoveRect.RectObject, 0, 0);
     }
     break;
