@@ -5,6 +5,9 @@
 #include "OsispLab1.h"
 #include "windowsx.h"
 #include "MoveableRectangle.h"
+#include "resource.h"
+
+#pragma comment(lib, "Msimg32.lib")
 
 #define MAX_LOADSTRING 100
 
@@ -88,8 +91,13 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 const int MOVE_TIMER = 1;
 
 RECT WindowRect;
-MoveableRectangle MoveRect(10,10,150,150);
+
+MoveableRectangle MoveRect(10,10,300,300);
 MoveDirection PreviousDirection;
+
+HANDLE RectanglePictureHandler;
+BITMAP RectangleBmp;
+BOOL IsRectShow = TRUE;
 
 POINT CurrCursorPos;
 BOOL IsRectCaptured = FALSE;
@@ -132,7 +140,7 @@ VOID InvertTimerState(HWND hWnd, int timerId)
 {
     if (IsTimerStopped)
     {
-        SetTimer(hWnd, timerId, 1, NULL);
+        SetTimer(hWnd, timerId, 10, NULL);
         IsTimerStopped = FALSE;
     }
     else
@@ -173,7 +181,36 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     return TRUE;
 }
 
+VOID DrawObject(HWND hWnd)
+{
+    PAINTSTRUCT ps;
+    HDC hdc = BeginPaint(hWnd, &ps);
 
+    if (IsRectShow)
+    {
+        HBRUSH brush = CreateSolidBrush(RGB(235, 125, 64));
+        FillRect(hdc, &MoveRect.RectObject, brush);
+        DeleteObject(brush);
+    }
+    else
+    {
+        HDC hMemDc = CreateCompatibleDC(hdc);
+        HBITMAP hBmp = (HBITMAP)SelectObject(hMemDc, RectanglePictureHandler);
+        if (hBmp)
+        {
+            SetMapMode(hMemDc, GetMapMode(hdc));
+            TransparentBlt(hdc, MoveRect.RectObject.left, MoveRect.RectObject.top,
+                MoveRect.RectObject.right - MoveRect.RectObject.left, MoveRect.RectObject.bottom - MoveRect.RectObject.top,
+                hMemDc, 0, 0, RectangleBmp.bmWidth, RectangleBmp.bmHeight, RGB(255, 255, 255));
+            SelectObject(hMemDc, hBmp);
+        }
+
+        DeleteDC(hMemDc);
+    }
+
+    // TODO: Add any drawing code that uses hdc here...
+    EndPaint(hWnd, &ps);
+}
 
 //
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
@@ -189,6 +226,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+    case WM_CREATE:
+    {
+        RectanglePictureHandler = LoadImage(NULL, L"picture.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);//LoadBitmap(hInst, MAKEINTRESOURCE(IDB_BITMAP1));
+        GetObject(RectanglePictureHandler, sizeof(RectangleBmp), &RectangleBmp);
+    }
+    break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -208,13 +251,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_PAINT:
         {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-
-            FillRect(hdc, &MoveRect.RectObject, (HBRUSH)CreateSolidBrush(RGB(235,125,64)));
-
-            // TODO: Add any drawing code that uses hdc here...
-            EndPaint(hWnd, &ps);
+            DrawObject(hWnd);
         }
         break;
 
@@ -297,13 +334,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case VK_BACK:
             MoveRect.ChangeSpeed(MoveRect.GetSpeed() * -1);
-
+            break;
         // Pause rect moving.
         case VK_SPACE:
         {
             InvertTimerState(hWnd, MOVE_TIMER);
             break;
         }
+
+        case VK_TAB:
+            IsRectShow = !IsRectShow;
+            DrawObject(hWnd);
+            break;
         default:
             break;
         }
