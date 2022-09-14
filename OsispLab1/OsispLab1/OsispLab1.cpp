@@ -119,6 +119,8 @@ VOID FinalizeBuffer()
 
 RECT WindowRect;
 
+#pragma region Moving rect interaction.
+
 MoveableRectangle MoveRect(10,10,300,300);
 MoveDirection PreviousDirection;
 
@@ -162,6 +164,8 @@ VOID MoveRectangle(HWND hWnd, LPRECT rectangle, LONG xChange, LONG yChange)
     InvalidateRect(hWnd, NULL, FALSE);
 }
 
+#pragma endregion
+
 BOOL IsTimerStopped = TRUE;
 VOID InvertTimerState(HWND hWnd, int timerId)
 {
@@ -175,6 +179,39 @@ VOID InvertTimerState(HWND hWnd, int timerId)
         KillTimer(hWnd, timerId);
         IsTimerStopped = TRUE;
     }
+}
+
+VOID DrawObject(HWND hWnd)
+{
+    HBRUSH brushWindow = CreateSolidBrush(RGB(255, 255, 255));
+    FillRect(HdcBuffer, &WindowRect, brushWindow);
+
+    if (IsRectShow)
+    {
+        HBRUSH brush = CreateSolidBrush(RGB(235, 125, 64));
+        FillRect(HdcBuffer, &MoveRect.RectObject, brush);
+        DeleteObject(brush);
+    }
+    else
+    {
+        HDC hMemDc = CreateCompatibleDC(HdcBuffer);
+        HBITMAP hBmp = (HBITMAP)SelectObject(hMemDc, RectanglePictureHandler);
+        if (hBmp)
+        {
+            SetMapMode(hMemDc, GetMapMode(HdcBuffer));
+            TransparentBlt(HdcBuffer, MoveRect.RectObject.left, MoveRect.RectObject.top,
+                MoveRect.RectObject.right - MoveRect.RectObject.left, MoveRect.RectObject.bottom - MoveRect.RectObject.top,
+                hMemDc, 0, 0, RectangleBmp.bmWidth, RectangleBmp.bmHeight, RGB(255, 255, 255));
+            SelectObject(hMemDc, hBmp);
+        }
+
+        DeleteDC(hMemDc);
+    }
+
+    PAINTSTRUCT ps;
+    HDC hdc = BeginPaint(hWnd, &ps);
+    BitBlt(hdc, 0, 0, WindowRect.right, WindowRect.bottom, HdcBuffer, 0, 0, SRCCOPY);
+    EndPaint(hWnd, &ps);
 }
 
 //
@@ -208,39 +245,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     return TRUE;
 }
 
-VOID DrawObject(HWND hWnd)
-{
-    HBRUSH brushWindow = CreateSolidBrush(RGB(255,255,255));
-    FillRect(HdcBuffer, &WindowRect, brushWindow);
-
-    if (IsRectShow)
-    {
-        HBRUSH brush = CreateSolidBrush(RGB(235, 125, 64));
-        FillRect(HdcBuffer, &MoveRect.RectObject, brush);
-        DeleteObject(brush);
-    }
-    else
-    {
-        HDC hMemDc = CreateCompatibleDC(HdcBuffer);
-        HBITMAP hBmp = (HBITMAP)SelectObject(hMemDc, RectanglePictureHandler);
-        if (hBmp)
-        {
-            SetMapMode(hMemDc, GetMapMode(HdcBuffer));
-            TransparentBlt(HdcBuffer, MoveRect.RectObject.left, MoveRect.RectObject.top,
-                MoveRect.RectObject.right - MoveRect.RectObject.left, MoveRect.RectObject.bottom - MoveRect.RectObject.top,
-                hMemDc, 0, 0, RectangleBmp.bmWidth, RectangleBmp.bmHeight, RGB(255, 255, 255));
-            SelectObject(hMemDc, hBmp);
-        }
-
-        DeleteDC(hMemDc);
-    }
-
-    PAINTSTRUCT ps;
-    HDC hdc = BeginPaint(hWnd, &ps);
-    BitBlt(hdc, 0, 0, WindowRect.right, WindowRect.bottom, HdcBuffer, 0, 0, SRCCOPY);
-    EndPaint(hWnd, &ps);
-}
-
 //
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
@@ -262,34 +266,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
     break;
     case WM_COMMAND:
+    {
+        int wmId = LOWORD(wParam);
+        // Parse the menu selections:
+        switch (wmId)
         {
-            int wmId = LOWORD(wParam);
-            // Parse the menu selections:
-            switch (wmId)
-            {
-            case IDM_ABOUT:
-                DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
-                break;
-            case IDM_EXIT:
-                DestroyWindow(hWnd);
-                break;
-            default:
-                return DefWindowProc(hWnd, message, wParam, lParam);
-            }
+        case IDM_ABOUT:
+            DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+            break;
+        case IDM_EXIT:
+            DestroyWindow(hWnd);
+            break;
+        default:
+            return DefWindowProc(hWnd, message, wParam, lParam);
         }
-        break;
+    }
+    break;
     case WM_PAINT:
-        {
-            DrawObject(hWnd);
-        }
-        break;
+    {
+        DrawObject(hWnd);
+    }
+    break;
 
     case WM_LBUTTONDOWN:
     {
         CurrCursorPos = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
         if ((CurrCursorPos.x >= MoveRect.RectObject.left && CurrCursorPos.x <= MoveRect.RectObject.right) &&
             (CurrCursorPos.y >= MoveRect.RectObject.top && CurrCursorPos.y <= MoveRect.RectObject.bottom))
+        {
+            KillTimer(hWnd, MOVE_TIMER);
+
             IsRectCaptured = TRUE;
+        }
     }
     break;
     case WM_MOUSEMOVE:
@@ -306,6 +314,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     break;
     case WM_LBUTTONUP:
     {
+        if(!IsTimerStopped)
+            SetTimer(hWnd, MOVE_TIMER, 10, NULL);
+
         IsRectCaptured = FALSE;
     }
     break;
@@ -367,7 +378,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // Pause rect moving.
         case VK_SPACE:
         {
-            InvertTimerState(hWnd, MOVE_TIMER);
+            if(!IsRectCaptured)
+                InvertTimerState(hWnd, MOVE_TIMER);
+
             break;
         }
 
