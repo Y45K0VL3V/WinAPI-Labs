@@ -1,11 +1,12 @@
 #pragma once
 
+#define _CRT_SECURE_NO_WARNINGS
 #include "framework.h"
 
 class TextTable
 {
 public:
-	TextTable(char columnAmount, char rowAmount);
+	TextTable(char columnAmount, char rowAmount, char* cellsData);
 	
 	void SetDimensions(short x, short y, short width);
 
@@ -17,6 +18,7 @@ public:
 
 private:
 	void RecalculateTable();
+	char** SetText(char* totalData);
 
 	char _columnAmount;
 	char _rowAmount;
@@ -29,6 +31,6 @@ private:
 	short _tableWidth;
 	short _tableHeight;
 
-	//HWND* _textBoxList;
+	wchar_t** _cellsData;
 };
 

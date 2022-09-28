@@ -132,10 +132,12 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextTable.h" />
+    <ClInclude Include="TextTableGraphics.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OsispLab2.cpp" />
     <ClCompile Include="TextTable.cpp" />
+    <ClCompile Include="TextTableGraphics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OsispLab2.rc" />

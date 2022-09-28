@@ -30,12 +30,18 @@
     <ClInclude Include="TextTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TextTableGraphics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OsispLab2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextTableGraphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

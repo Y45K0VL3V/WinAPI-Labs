@@ -6,6 +6,8 @@
 #include "windowsx.h"
 
 #define MAX_LOADSTRING 100
+#define COLUMNS 5
+#define ROWS 6
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
@@ -55,9 +57,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     return (int) msg.wParam;
 }
-
-
-HWND TextBox;
 
 //
 //  FUNCTION: MyRegisterClass()

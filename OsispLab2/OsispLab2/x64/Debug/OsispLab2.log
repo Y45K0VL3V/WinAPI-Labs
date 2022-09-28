@@ -1,2 +1,5 @@
 ﻿  TextTable.cpp
+  TextTableGraphics.cpp
+  Generating Code...
+C:\Учёба\OSISP\OsispLab2\OsispLab2\TextTable.cpp(22): warning C4172: returning address of local variable or temporary: totalData
   OsispLab2.vcxproj -> C:\Учёба\OSISP\OsispLab2\x64\Debug\OsispLab2.exe
