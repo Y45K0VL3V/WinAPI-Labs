@@ -17,6 +17,7 @@ wchar_t** TextTable::ParseFile(HANDLE file)
 		DWORD bytesToReadAmount = rand() % 254;
 		ReadFile(file, result[i], bytesToReadAmount, &dwByte, NULL);
 		result[i][dwByte] = 0;
+
 		/*size_t dataLength = strlen(cellsData) + 1;
 		mbstowcs(*_cellsData, *SetText(cellsData), dataLength);*/
 	}

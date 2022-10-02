@@ -134,7 +134,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         //SendMessage(aTextBox, WM_SETFONT, (WPARAM)gTextFont, 0);
         //TextBox = CreateWindow(L"EDIT", NULL, WS_BORDER | WS_CHILD | WS_VISIBLE, 10, 10, 200, 200, hWnd, NULL, NULL, NULL);
         //wchar_t str[80];
-        //SendMessage(TextBox, WM_GETTEXT, 80, LPARAM(str)); //считали
     }
     break;
     case WM_COMMAND:
@@ -162,15 +161,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         EndPaint(hWnd, &ps);
     }
     break;
-    case WM_SIZE:
-    {
-        /*GetWindowRect(TextBox, &BoxRect);
-        HDC aHDC = GetDC(TextBox);
-        RECT aRect;
-        DrawText(aHDC, L"Sheesh\nSheeshSheeshSheesh\nSheeshSheeshSheeshSheeshSheeshSheesh", 63, &BoxRect, DT_CALCRECT | DT_LEFT);
-        SetWindowPos(TextBox, NULL, 0, 0, BoxRect.right - BoxRect.left, BoxRect.bottom - BoxRect.top + 4, SWP_NOMOVE);*/
-        break;
-    }
     case WM_DESTROY:
         PostQuitMessage(0);
         break;

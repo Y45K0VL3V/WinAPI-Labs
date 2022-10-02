@@ -33,6 +33,9 @@
     <ClInclude Include="TextTableGraphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ResizableTextBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OsispLab2.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextTableGraphics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizableTextBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

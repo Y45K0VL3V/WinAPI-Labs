@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="OsispLab2.h" />
+    <ClInclude Include="ResizableTextBox.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextTable.h" />
@@ -136,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OsispLab2.cpp" />
+    <ClCompile Include="ResizableTextBox.cpp" />
     <ClCompile Include="TextTable.cpp" />
     <ClCompile Include="TextTableGraphics.cpp" />
   </ItemGroup>

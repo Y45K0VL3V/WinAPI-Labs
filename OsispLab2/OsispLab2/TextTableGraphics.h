@@ -3,6 +3,7 @@
 #include "framework.h"
 #include "string.h"
 #include "TextTable.h"
+#include "ResizableTextBox.h"
 
 class TextTableGraphics
 {
@@ -27,6 +28,6 @@ private:
 	HDC _parentHDC;
 	TextTable* _tableInfo;
 
-	HWND* _textBoxList;
+	ResizableTextBox* _textBoxList;
 };
 

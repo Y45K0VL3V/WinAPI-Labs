@@ -7,7 +7,7 @@ TextTableGraphics::TextTableGraphics(HWND parentHWND, HDC parentHDC, TextTable* 
 	_tableInfo = tableInfo;
 
 	short cellsAmount = tableInfo->GetRows() * tableInfo->GetColumns();
-	_textBoxList = (HWND*)calloc(cellsAmount, sizeof(tableInfo));
+	_textBoxList = (ResizableTextBox*)calloc(cellsAmount, sizeof(ResizableTextBox));
 }
 
 void TextTableGraphics::Draw()
