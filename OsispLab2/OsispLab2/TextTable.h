@@ -6,31 +6,19 @@
 class TextTable
 {
 public:
-	TextTable(char columnAmount, char rowAmount, char* cellsData);
-	
-	void SetDimensions(short x, short y, short width);
+	TextTable(char columnAmount, char rowAmount, HANDLE cellsDataFile);
 
 	char GetColumns() { return _columnAmount; };
 	char GetRows() { return _rowAmount; };
-	
-	short GetTableWidth() { return _tableWidth; };
-	short GetTableHeight() { return _tableHeight; };
+
+	wchar_t** GetInitData() { return _cellsInitData; };
 
 private:
-	void RecalculateTable();
-	char** SetText(char* totalData);
-
 	char _columnAmount;
 	char _rowAmount;
 
-	// x - horizontal coord. of left top point.
-	short _x;
-	// y - vertical coord. of left top point.
-	short _y;
+	wchar_t** _cellsInitData;
 
-	short _tableWidth;
-	short _tableHeight;
-
-	wchar_t** _cellsData;
+	wchar_t** ParseFile(HANDLE file);
 };
 

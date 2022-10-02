@@ -1,24 +1,26 @@
 #include "TextTable.h"
 
-TextTable::TextTable(char columnAmount, char rowAmount, char* cellsData)
+TextTable::TextTable(char columnAmount, char rowAmount, HANDLE cellsDataFile)
 {
 	_columnAmount = columnAmount;
 	_rowAmount = rowAmount;
-
-	size_t dataLength = strlen(cellsData) + 1;
-	mbstowcs(*_cellsData, *SetText(cellsData), dataLength);
+	_cellsInitData = ParseFile(cellsDataFile);
 }
 
-void TextTable::SetDimensions(short x, short y, short width)
+wchar_t** TextTable::ParseFile(HANDLE file)
 {
-	_x = x;
-	_y = y;
-	_tableWidth = width;
-}
+	short cellsAmount = _columnAmount * _rowAmount;
+	wchar_t** result = (wchar_t**)calloc(cellsAmount * 255, sizeof(wchar_t));
+	for (int i = 0; i < cellsAmount; i++)
+	{
+		DWORD dwByte;
+		DWORD bytesToReadAmount = rand() % 254;
+		ReadFile(file, result[i], bytesToReadAmount, &dwByte, NULL);
+		result[i][dwByte] = 0;
+		/*size_t dataLength = strlen(cellsData) + 1;
+		mbstowcs(*_cellsData, *SetText(cellsData), dataLength);*/
+	}
 
-////TODO: Processing one long data in multiple strings (total amount = rows*columns). Process by /n?
-char** TextTable::SetText(char* totalData)
-{
-	return &totalData;
+	return result;
 }
 
