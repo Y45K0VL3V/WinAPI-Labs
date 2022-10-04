@@ -1,9 +1,13 @@
 #include "TextTableGraphics.h"
 
-TextTableGraphics::TextTableGraphics(HWND parentHWND, HDC parentHDC, TextTable* tableInfo)
+TextTableGraphics::TextTableGraphics()
+{
+}
+
+TextTableGraphics::TextTableGraphics(HWND parentHWND, TextTable* tableInfo)
 {
 	_parentHWND = parentHWND;
-	_parentHDC = parentHDC;
+	_parentHDC = GetDC(parentHWND);
 	_tableInfo = tableInfo;
 
 	short cellsAmount = tableInfo->GetRows() * tableInfo->GetColumns();
@@ -12,4 +16,5 @@ TextTableGraphics::TextTableGraphics(HWND parentHWND, HDC parentHDC, TextTable* 
 
 void TextTableGraphics::Draw()
 {
+
 }

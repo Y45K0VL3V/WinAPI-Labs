@@ -8,7 +8,8 @@
 class TextTableGraphics
 {
 public:
-	TextTableGraphics(HWND parentHWND, HDC parentHDC, TextTable* tableInfo);
+	TextTableGraphics();
+	TextTableGraphics(HWND parentHWND, TextTable* tableInfo);
 	void Draw();
 
 

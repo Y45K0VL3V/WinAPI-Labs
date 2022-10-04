@@ -1,3 +1,5 @@
-﻿  ResizableTextBox.cpp
-C:\Учёба\OSISP\OsispLab2\OsispLab2\ResizableTextBox.cpp(23,97): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  OsispLab2.vcxproj -> C:\Учёба\OSISP\OsispLab2\x64\Debug\OsispLab2.exe
+﻿  OsispLab2.cpp
+  TextTable.cpp
+  TextTableGraphics.cpp
+  Generating Code...
+  OsispLab2.vcxproj -> C:\University\OSISP\OsispLab2\x64\Debug\OsispLab2.exe

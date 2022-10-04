@@ -6,19 +6,20 @@
 class TextTable
 {
 public:
+	TextTable();
 	TextTable(char columnAmount, char rowAmount, HANDLE cellsDataFile);
 
 	char GetColumns() { return _columnAmount; };
 	char GetRows() { return _rowAmount; };
 
-	wchar_t** GetInitData() { return _cellsInitData; };
+	char** GetInitData() { return _cellsInitData; };
 
 private:
 	char _columnAmount;
 	char _rowAmount;
 
-	wchar_t** _cellsInitData;
+	char** _cellsInitData;
 
-	wchar_t** ParseFile(HANDLE file);
+	char** ParseFile(HANDLE file);
 };
 

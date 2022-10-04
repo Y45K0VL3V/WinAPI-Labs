@@ -1,9 +1,11 @@
 ﻿// OsispLab2.cpp : Defines the entry point for the application.
 //
-
+#define _CRT_SECURE_NO_WARNINGS
 #include "framework.h"
 #include "OsispLab2.h"
 #include "windowsx.h"
+#include "TextTable.h"
+#include "TextTableGraphics.h"
 
 #define MAX_LOADSTRING 100
 #define COLUMNS 5
@@ -112,6 +114,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    return TRUE;
 }
 
+const wchar_t SrcFilePath[] = L"C:/University/OSISP/OsispLab2/x64/Debug/Src/text.txt";
+
+TextTable TextTableMeta;
+TextTableGraphics TextTableDrawer;
+
 //
 //  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
 //
@@ -122,18 +129,22 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - post a quit message and return
 //
 //
-HWND TextBox;
-RECT BoxRect;
+#define BUFSIZE MAX_PATH
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
     case WM_CREATE:
     {
-        //TextBox = CreateWindow(L"Edit", NULL, WS_BORDER | WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL, 10, 10, 200, 100, hWnd, NULL, NULL, NULL);
-        //SendMessage(aTextBox, WM_SETFONT, (WPARAM)gTextFont, 0);
-        //TextBox = CreateWindow(L"EDIT", NULL, WS_BORDER | WS_CHILD | WS_VISIBLE, 10, 10, 200, 200, hWnd, NULL, NULL, NULL);
-        //wchar_t str[80];
+        HANDLE file = CreateFile(SrcFilePath, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        if (INVALID_HANDLE_VALUE == file) {
+            MessageBox(hWnd, L"File not found!", L"Error", MB_OK);
+        }
+        else {
+            TextTableMeta = TextTable(COLUMNS, ROWS, file);
+            TextTableDrawer = TextTableGraphics(hWnd, &TextTableMeta);
+            CloseHandle(file);
+        }
     }
     break;
     case WM_COMMAND:
