@@ -1,5 +1,6 @@
 #pragma once
 
+#define _CRT_SECURE_NO_WARNINGS
 #include "framework.h"
 #include "string.h"
 #include "TextTable.h"
@@ -30,5 +31,7 @@ private:
 	TextTable* _tableInfo;
 
 	ResizableTextBox* _textBoxList;
+
+	void InitTextFields(short cellsAmount);
 };
 

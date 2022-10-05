@@ -35,6 +35,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UIN
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
+
+
 ResizableTextBox::ResizableTextBox(HWND parentHWND, int x, int y, int width, int height)
 {
     TextBoxWindow = CreateWindow(L"Edit", NULL, WS_BORDER | WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL, x, y, width, height, parentHWND, NULL, NULL, NULL);
