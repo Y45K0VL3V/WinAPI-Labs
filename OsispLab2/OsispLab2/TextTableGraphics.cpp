@@ -1,5 +1,43 @@
 #include "TextTableGraphics.h"
 
+//LRESULT CALLBACK TableProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+//{
+//    switch (uMsg)
+//    {
+//    case WM_NOTIFY:
+//        break;
+//    case WM_COMMAND:
+//    {
+//        int wmId = HIWORD(wParam);
+//        // Parse the menu selections:
+//        switch (wmId)
+//        {
+//            case EN_CHANGE:
+//            {
+//                //short cellsAmount = tableInfo->GetRows() * tableInfo->GetColumns();
+//                for (short i = 0; i < 30; i++)
+//                {
+//                    RECT textBoxRect;
+//                    GetWindowRect(hWnd, &textBoxRect);
+//                    HDC textBoxHDC = GetDC(hWnd);
+//
+//                    wchar_t text[1024];
+//                    SendMessage(hWnd, WM_GETTEXT, 1024, LPARAM(text));
+//                    DrawText(textBoxHDC, text, wcslen(text), &textBoxRect, DT_CALCRECT | DT_LEFT);
+//                    SetWindowPos(hWnd, NULL, 0, 0, textBoxRect.right - textBoxRect.left, textBoxRect.bottom - textBoxRect.top + 4, SWP_NOMOVE);
+//                }
+//                break;
+//            }
+//        }
+//    }
+//    break;
+//    case WM_NCDESTROY:
+//        RemoveWindowSubclass(hWnd, TableProc, 0);
+//        return 0;
+//    }
+//    return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+//}
+
 TextTableGraphics::TextTableGraphics()
 {
 }
@@ -7,20 +45,24 @@ TextTableGraphics::TextTableGraphics()
 TextTableGraphics::TextTableGraphics(HWND parentHWND, TextTable* tableInfo)
 {
 	_parentHWND = parentHWND;
+    //SetWindowSubclass(parentHWND, TableProc, 0, 0);
+
 	_parentHDC = GetDC(parentHWND);
 	_tableInfo = tableInfo;
 	
 	RECT windowRect;
 	GetWindowRect(_parentHWND, &windowRect);
-	_tableWidth = windowRect.right - windowRect.left;
-
+	_tableWidth = GetTableWidthFromRect(windowRect);
 
 	short cellsAmount = tableInfo->GetRows() * tableInfo->GetColumns();
 	_textBoxList = (ResizableTextBox*)calloc(cellsAmount, sizeof(ResizableTextBox));
 	InitTextFields(cellsAmount);
 }
 
-
+short TextTableGraphics::GetTableWidthFromRect(RECT windowRect)
+{
+	return windowRect.right - windowRect.left - 15;
+}
 
 void TextTableGraphics::Draw()
 {

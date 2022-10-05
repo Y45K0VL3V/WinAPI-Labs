@@ -8,8 +8,8 @@
 #include "TextTableGraphics.h"
 
 #define MAX_LOADSTRING 100
-#define COLUMNS 5
-#define ROWS 6
+#define COLUMNS 4
+#define ROWS 1
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
@@ -158,8 +158,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         case IDM_EXIT:
             DestroyWindow(hWnd);
-            break;
-        case EN_CHANGE:
             break;
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);

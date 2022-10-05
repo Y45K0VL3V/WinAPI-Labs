@@ -13,10 +13,10 @@ public:
 	TextTableGraphics(HWND parentHWND, TextTable* tableInfo);
 	void Draw();
 
-
 	short GetTableWidth() { return _tableWidth; };
 	short GetTableHeight() { return _tableHeight; };
 
+	ResizableTextBox* GetTextFields() { return _textBoxList; };
 private:
 	// x - horizontal coord. of left top point.
 	short _x;
@@ -33,5 +33,6 @@ private:
 	ResizableTextBox* _textBoxList;
 
 	void InitTextFields(short cellsAmount);
+	short GetTableWidthFromRect(RECT windowRect);
 };
 
