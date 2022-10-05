@@ -1,3 +1,2 @@
-﻿  TextTableGraphics.cpp
-C:\University\OSISP\OsispLab2\OsispLab2\TextTableGraphics.cpp(55,51): warning C4244: '=': conversion from 'LONG' to 'short', possible loss of data
+﻿  OsispLab2.cpp
   OsispLab2.vcxproj -> C:\University\OSISP\OsispLab2\x64\Debug\OsispLab2.exe

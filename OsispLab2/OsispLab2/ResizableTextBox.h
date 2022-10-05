@@ -9,6 +9,8 @@ class ResizableTextBox
 public:
 	ResizableTextBox(HWND parentHWND, int x, int y, int width, int height);
 
+	void Resize();
+
 	HWND TextBoxWindow;
 private:
 	//SUBCLASSPROC TextBoxProc;

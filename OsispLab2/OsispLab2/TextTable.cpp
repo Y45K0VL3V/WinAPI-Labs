@@ -28,8 +28,6 @@ char** TextTable::ParseFile(HANDLE file)
 		result[i][dwByte] = 0;	
 	}
 
-	/*size_t dataLength = strlen(cellsData) + 1;
-	mbstowcs(*_cellsData, *SetText(cellsData), dataLength);*/
 	return result;
 }
 

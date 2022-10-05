@@ -11,7 +11,7 @@ class TextTableGraphics
 public:
 	TextTableGraphics();
 	TextTableGraphics(HWND parentHWND, TextTable* tableInfo);
-	void Draw();
+	void Draw(char** initData);
 
 	short GetTableWidth() { return _tableWidth; };
 	short GetTableHeight() { return _tableHeight; };
@@ -30,9 +30,10 @@ private:
 	HDC _parentHDC;
 	TextTable* _tableInfo;
 
+	short _cellsAmount;
 	ResizableTextBox* _textBoxList;
 
-	void InitTextFields(short cellsAmount);
+	void InitTextFields();
 	short GetTableWidthFromRect(RECT windowRect);
 };
 

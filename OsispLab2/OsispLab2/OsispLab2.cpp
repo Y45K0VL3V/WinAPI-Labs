@@ -9,7 +9,7 @@
 
 #define MAX_LOADSTRING 100
 #define COLUMNS 4
-#define ROWS 1
+#define ROWS 2
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
