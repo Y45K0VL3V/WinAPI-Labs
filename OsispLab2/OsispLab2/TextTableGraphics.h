@@ -18,11 +18,6 @@ public:
 
 	ResizableTextBox* GetTextFields() { return _textBoxList; };
 private:
-	// x - horizontal coord. of left top point.
-	short _x;
-	// y - vertical coord. of left top point.
-	short _y;
-
 	short _tableWidth;
 	short _tableHeight;
 
@@ -34,6 +29,7 @@ private:
 	ResizableTextBox* _textBoxList;
 
 	void InitTextFields();
-	short GetTableWidthFromRect(RECT windowRect);
+	short CalcTableWidth(HWND window);
+	void UpdateTableWidth();
 };
 

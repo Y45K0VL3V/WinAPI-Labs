@@ -149,6 +149,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     break;
     case WM_COMMAND:
     {
+        if (wParam == 6666)
+            TextTableDrawer.Draw(nullptr);
+
         int wmId = LOWORD(wParam);
         // Parse the menu selections:
         switch (wmId)
@@ -162,6 +165,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
+    }
+    break;
+    case WM_SIZE:
+    {
+        TextTableDrawer.Draw(nullptr);
     }
     break;
     case WM_PAINT:

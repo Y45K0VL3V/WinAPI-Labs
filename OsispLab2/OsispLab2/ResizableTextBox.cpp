@@ -23,6 +23,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UIN
         case WM_KILLFOCUS:
         {
             ResizeTextBox(hWnd);
+            SendMessage(GetParent(hWnd), WM_COMMAND, LPARAM(6666), NULL);
         }
         break;
         case WM_NCDESTROY:

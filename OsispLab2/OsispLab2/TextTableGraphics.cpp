@@ -12,22 +12,36 @@ TextTableGraphics::TextTableGraphics(HWND parentHWND, TextTable* tableInfo)
 	_parentHDC = GetDC(parentHWND);
 	_tableInfo = tableInfo;
 	
-	RECT windowRect;
-	GetWindowRect(_parentHWND, &windowRect);
-	_tableWidth = GetTableWidthFromRect(windowRect);
+	_tableWidth = CalcTableWidth(parentHWND);
 
 	_cellsAmount = tableInfo->GetRows() * tableInfo->GetColumns();
 	_textBoxList = (ResizableTextBox*)calloc(_cellsAmount, sizeof(ResizableTextBox));
 	InitTextFields();
 }
 
-short TextTableGraphics::GetTableWidthFromRect(RECT windowRect)
+short TextTableGraphics::CalcTableWidth(HWND window)
 {
+	RECT windowRect;
+	GetWindowRect(window, &windowRect);
 	return windowRect.right - windowRect.left - 15;
+}
+
+void TextTableGraphics::UpdateTableWidth()
+{
+	short newWidth = CalcTableWidth(_parentHWND);
+	if (newWidth != _tableWidth)
+	{
+		_tableWidth = newWidth;
+		for (short i = 0; i < _cellsAmount; i++)
+			_textBoxList[i].Resize();
+	}
+
 }
 
 void TextTableGraphics::Draw(char** initData)
 {
+	UpdateTableWidth();
+
 	char columnAmount = _tableInfo->GetColumns();
 	int columnWidth = _tableWidth / columnAmount;
 
@@ -53,8 +67,8 @@ void TextTableGraphics::Draw(char** initData)
 
 		if ((i + 1) % columnAmount == 0)
 		{
-			for (short j = i; j >= i - columnAmount; j--)
-				SetWindowPos(_textBoxList[j].TextBoxWindow, NULL, 0, 0, columnWidth, maxHeightInRow + 4, SWP_NOMOVE);
+			for (short j = i; j >= i - columnAmount + 1; j--)
+				SetWindowPos(_textBoxList[j].TextBoxWindow, NULL, _tableWidth - (i - j + 1) * columnWidth, currPosY, columnWidth, maxHeightInRow, NULL);
 
 			currPosY += maxHeightInRow;
 			maxHeightInRow = 0;

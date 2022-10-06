@@ -12,8 +12,5 @@ public:
 	void Resize();
 
 	HWND TextBoxWindow;
-private:
-	//SUBCLASSPROC TextBoxProc;
-	//LRESULT CALLBACK TextBoxProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 };
 
