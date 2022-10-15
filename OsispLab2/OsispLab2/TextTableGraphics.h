@@ -13,13 +13,13 @@ public:
 	TextTableGraphics(HWND parentHWND, TextTable* tableInfo);
 	void Draw(char** initData);
 
-	short GetTableWidth() { return _tableWidth; };
-	short GetTableHeight() { return _tableHeight; };
+	double GetTableWidth() { return _tableWidth; };
+	double GetTableHeight() { return _tableHeight; };
 
 	ResizableTextBox* GetTextFields() { return _textBoxList; };
 private:
-	short _tableWidth;
-	short _tableHeight;
+	double _tableWidth;
+	double _tableHeight;
 
 	HWND _parentHWND;
 	HDC _parentHDC;
@@ -29,7 +29,7 @@ private:
 	ResizableTextBox* _textBoxList;
 
 	void InitTextFields();
-	short CalcTableWidth(HWND window);
+	double CalcTableWidth(HWND window);
 	void UpdateTableWidth();
 };
 

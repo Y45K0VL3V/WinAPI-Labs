@@ -8,8 +8,8 @@
 #include "TextTableGraphics.h"
 
 #define MAX_LOADSTRING 100
-#define COLUMNS 4
-#define ROWS 2
+#define COLUMNS 5
+#define ROWS 5
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance

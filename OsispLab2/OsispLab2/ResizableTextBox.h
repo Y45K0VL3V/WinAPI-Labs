@@ -7,7 +7,7 @@
 class ResizableTextBox
 {
 public:
-	ResizableTextBox(HWND parentHWND, int x, int y, int width, int height);
+	ResizableTextBox(HWND parentHWND, double x, double y, double width, double height);
 
 	void Resize();
 

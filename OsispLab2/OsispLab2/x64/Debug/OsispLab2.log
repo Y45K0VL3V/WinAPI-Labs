@@ -1,3 +1,6 @@
 ﻿  TextTableGraphics.cpp
-C:\University\OSISP\OsispLab2\OsispLab2\TextTableGraphics.cpp(26,44): warning C4244: 'return': conversion from 'LONG' to 'short', possible loss of data
+C:\University\OSISP\OsispLab2\OsispLab2\TextTableGraphics.cpp(73,119): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\University\OSISP\OsispLab2\OsispLab2\TextTableGraphics.cpp(73,106): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\University\OSISP\OsispLab2\OsispLab2\TextTableGraphics.cpp(73,96): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\University\OSISP\OsispLab2\OsispLab2\TextTableGraphics.cpp(73,67): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
   OsispLab2.vcxproj -> C:\University\OSISP\OsispLab2\x64\Debug\OsispLab2.exe

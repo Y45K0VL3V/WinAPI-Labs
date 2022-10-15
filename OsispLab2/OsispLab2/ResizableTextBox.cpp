@@ -4,7 +4,7 @@ void ResizeTextBox(HWND hWnd)
 {
     RECT textBoxRect;
     GetWindowRect(hWnd, &textBoxRect);
-    int width = textBoxRect.right - textBoxRect.left;
+    double width = textBoxRect.right - textBoxRect.left;
     HDC textBoxHDC = GetDC(hWnd);
 
     wchar_t text[1024];
@@ -33,7 +33,7 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UIN
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
-ResizableTextBox::ResizableTextBox(HWND parentHWND, int x, int y, int width, int height)
+ResizableTextBox::ResizableTextBox(HWND parentHWND, double x, double y, double width, double height)
 {
     TextBoxWindow = CreateWindow(L"Edit", NULL, WS_BORDER | WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL, x, y, width, height, parentHWND, NULL, NULL, NULL);
     SetWindowSubclass(TextBoxWindow, WinProc, 0, 0);
