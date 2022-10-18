@@ -10,6 +10,7 @@ public:
 	ResizableTextBox(HWND parentHWND, double x, double y, double width, double height);
 
 	void Resize();
+	LONG GetTrueHeight();
 
 	HWND TextBoxWindow;
 };

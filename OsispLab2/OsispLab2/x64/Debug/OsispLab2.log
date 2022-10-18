@@ -1,6 +1,5 @@
-﻿  TextTableGraphics.cpp
-C:\University\OSISP\OsispLab2\OsispLab2\TextTableGraphics.cpp(73,119): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\University\OSISP\OsispLab2\OsispLab2\TextTableGraphics.cpp(73,106): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\University\OSISP\OsispLab2\OsispLab2\TextTableGraphics.cpp(73,96): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\University\OSISP\OsispLab2\OsispLab2\TextTableGraphics.cpp(73,67): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+﻿  ResizableTextBox.cpp
+C:\University\OSISP\OsispLab2\OsispLab2\ResizableTextBox.cpp(10,112): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\University\OSISP\OsispLab2\OsispLab2\ResizableTextBox.cpp(20,42): warning C4244: '=': conversion from 'double' to 'LONG', possible loss of data
+C:\University\OSISP\OsispLab2\OsispLab2\ResizableTextBox.cpp(45,21): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
   OsispLab2.vcxproj -> C:\University\OSISP\OsispLab2\x64\Debug\OsispLab2.exe
