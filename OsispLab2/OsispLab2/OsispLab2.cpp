@@ -183,6 +183,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
+    case SW_SHOWMINNOACTIVE:
+        TextTableDrawer.Draw(nullptr);
+        break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
