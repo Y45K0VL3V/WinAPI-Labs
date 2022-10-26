@@ -122,7 +122,6 @@ RECT WindowRect;
 #pragma region Moving rect interaction.
 
 MoveableRectangle MoveRect(10,10,300,300);
-MoveDirection PreviousDirection;
 
 HANDLE RectanglePictureHandler;
 BITMAP RectangleBmp;
