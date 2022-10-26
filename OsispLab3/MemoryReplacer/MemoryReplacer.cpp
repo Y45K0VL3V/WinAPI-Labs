@@ -2,6 +2,12 @@
 #include "MemoryReplacer.h"
 #include <Windows.h>
 #include <vector>
+#include <iostream>
+
+void Injected()
+{
+	std::cout << "\nInjected!\n";
+}
 
 void Replace(const char* data, const char* replacement)
 {

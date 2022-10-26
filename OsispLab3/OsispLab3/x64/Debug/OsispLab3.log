@@ -1,3 +1,3 @@
 ﻿  OsispLab3.cpp
-C:\University\OSISP\OsispLab3\OsispLab3\OsispLab3.cpp(40,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+C:\University\OSISP\OsispLab3\OsispLab3\OsispLab3.cpp(19,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
   OsispLab3.vcxproj -> C:\University\OSISP\OsispLab3\x64\Debug\OsispLab3.exe

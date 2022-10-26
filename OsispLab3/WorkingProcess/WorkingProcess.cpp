@@ -7,7 +7,7 @@ using namespace std;
 
 void main()
 {
-	string localString = "Work";
+	string localString = "Work123123";
 
 	while (1)
 	{
