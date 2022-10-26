@@ -13,8 +13,6 @@ typedef int Func(const char*, const char*);
 
 const int n = 3;
 
-DWORD GetProcessIdByProcessName(string processName);
-
 void main()
 {
 	string strings[n] = {
@@ -49,12 +47,9 @@ void main()
 
 
 	//dll injection
-	cout << "Enter name of the process: " << endl;
-	std::string AppName;
-	std::cin >> AppName;
-	DWORD pid = GetProcessIdByProcessName(AppName);
-	cout << "PID: ";
-	cout << pid << endl;
+	cout << "Enter PID of the process: " << endl;
+	DWORD pid;
+	std::cin >> pid;
 
 	HANDLE hRemoteProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
 
@@ -72,7 +67,6 @@ void main()
 
 		if (CreateRemoteThread(hRemoteProcess, NULL, 0, (LPTHREAD_START_ROUTINE)threadFunction, (LPVOID)argumentAddress, 0, NULL))
 		{
-			Sleep(1000);
 			cout << "Creating thread" << endl;
 			CloseHandle(hRemoteProcess);
 		}
@@ -84,28 +78,4 @@ void main()
 	else
 		cout << "Cant find PID" << endl;
 
-	/*cout << "\nEnter key for exit" << endl;
-	_getch();*/
-}
-
-DWORD GetProcessIdByProcessName(string processName)
-{
-	DWORD processId = 0;
-	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	PROCESSENTRY32 processEntry;
-
-	ZeroMemory(&processEntry, sizeof(processEntry));
-	processEntry.dwSize = sizeof(processEntry);
-
-	bool isFound = false;
-	while (Process32Next(hSnapshot, &processEntry) && !isFound)
-	{
-		if (!processName.compare((char*)processEntry.szExeFile))
-		{
-			processId = processEntry.th32ProcessID;
-			isFound = true;
-		}
-	}
-
-	return processId;
 }

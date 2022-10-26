@@ -1,3 +1,2 @@
-﻿  pch.cpp
-  dllmain.cpp
-LINK : fatal error LNK1104: cannot open file '..\x64\Debug\MemoryReplacer.lib'
+﻿  dllmain.cpp
+  InjectionDll.vcxproj -> C:\University\OSISP\OsispLab3\x64\Debug\InjectionDll.dll
