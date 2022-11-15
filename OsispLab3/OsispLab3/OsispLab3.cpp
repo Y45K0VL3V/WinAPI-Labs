@@ -9,9 +9,15 @@
 
 using namespace std;
 
-typedef int Func(const char*, const char*);
+typedef int Func();
 
 const int n = 3;
+
+typedef struct ReplacementParams
+{
+	char data[256];
+	char replacement[256];
+} ReplacementParams;
 
 void main()
 {
@@ -22,23 +28,33 @@ void main()
 	};
 
 	for (int i = 0; i < n; ++i)
-		cout << strings[i].c_str() << endl;
+		cout << strings[i] << endl;
 
-	Replace(strings[2].c_str(), "Some replace value!!!");
+	params parameters =
+	{
+		"Login Password",
+		"Some replace!!!"
+	};
+
+	Replace(&parameters);
 
 	for (int i = 0; i < n; i++)
-		cout << strings[i].c_str() << endl;
+		cout << strings[i] << endl;
 
-	//dll test's
+	parameters =
+	{
+		"Authorization.",
+		"short!"
+	};
 
 	HMODULE dll = 0;
 	if ((dll = LoadLibrary(L"MemoryReplacer"))) {
 		Func* _Replace;
 		_Replace = (Func*)GetProcAddress(dll, "Replace");
 		
-		Replace(strings[1].c_str(), "Some replace value!!!");
+		Replace(&parameters);
 		for (int i = 0; i < n; i++)
-			cout << strings[i].c_str() << endl;
+			cout << strings[i] << endl;
 
 		FreeLibrary(dll);
 	}
@@ -59,21 +75,42 @@ void main()
 
 		LPVOID threadFunction = (LPVOID)GetProcAddress(GetModuleHandle(L"kernel32.dll"), "LoadLibraryA");
 
-		string argument("InjectionDll.dll");
+		string argument("MemoryReplacer.dll");
 
 		LPVOID argumentAddress = VirtualAllocEx(hRemoteProcess, NULL, argument.length() + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
 		WriteProcessMemory(hRemoteProcess, (LPVOID)argumentAddress, argument.c_str(), argument.length() + 1, NULL);
-
-		if (CreateRemoteThread(hRemoteProcess, NULL, 0, (LPTHREAD_START_ROUTINE)threadFunction, (LPVOID)argumentAddress, 0, NULL))
+		HANDLE thread = CreateRemoteThread(hRemoteProcess, NULL, 0, (LPTHREAD_START_ROUTINE)threadFunction, (LPVOID)argumentAddress, 0, NULL);
+		if (thread)
 		{
-			cout << "Creating thread" << endl;
-			CloseHandle(hRemoteProcess);
+			WaitForSingleObject(thread, INFINITE);
+			CloseHandle(thread);
+
 		}
 		else
-			cout << "Cant create thread" << endl;
+			cout << "Can't create thread" << endl;
 
+		LPVOID replacerFunction = (LPVOID)GetProcAddress(LoadLibraryA("MemoryReplacer.dll"), "Replace");
+		ReplacementParams replacementParamsArgument =
+		{
+			"Work123123\0",
+			"Hello!\0"
+		};
 
+		argumentAddress = VirtualAllocEx(hRemoteProcess, NULL, sizeof(replacementParamsArgument), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+
+		WriteProcessMemory(hRemoteProcess, (LPVOID)argumentAddress, &replacementParamsArgument, sizeof(replacementParamsArgument), NULL);
+		thread = CreateRemoteThread(hRemoteProcess, NULL, 0, (LPTHREAD_START_ROUTINE)replacerFunction, (LPVOID)argumentAddress, 0, NULL);
+		if (thread)
+		{
+			WaitForSingleObject(thread, INFINITE);
+			CloseHandle(thread);
+
+		}
+		else
+			cout << "Can't create thread" << endl;
+
+		CloseHandle(hRemoteProcess);
 	}
 	else
 		cout << "Cant find PID" << endl;

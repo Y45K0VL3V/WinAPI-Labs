@@ -4,16 +4,11 @@
 #include <vector>
 #include <iostream>
 
-void Injected()
-{
-	std::cout << "\nInjected!\n";
-}
-
-void Replace(const char* data, const char* replacement)
+void Replace(params* params)
 {
 	HANDLE process = GetCurrentProcess();
-	size_t len = strlen(data);
-	size_t replacementLength = strlen(replacement);
+	size_t len = strlen(params->data);
+	size_t replacementLength = strlen(params->replacement);
 
 	if (process)
 	{
@@ -36,15 +31,24 @@ void Replace(const char* data, const char* replacement)
 					try {
 						if (ReadProcessMemory(process, p, &chunk[0], info.RegionSize, &bytesRead))
 						{
-							for (size_t i = 0; i < (bytesRead - len); ++i)
+							for (size_t i = 0; i <= (bytesRead - len); i++)
 							{
-								if (memcmp(data, &chunk[i], len) == 0)
+								if (memcmp(params->data, &chunk[i], len) == 0)
 								{
-									char* ref = (char*)p + i;
-									for (int j = 0; j < replacementLength; j++) {
-										ref[j] = replacement[j];
+									if (len <= replacementLength)
+									{
+										char* ref = (char*)p + i;
+										for (int j = 0; j < len; j++) {
+											ref[j] = params->replacement[j];
+										}
 									}
-									ref[replacementLength] = 0;
+									else
+									{
+										char* ref = (char*)p + i;
+										for (int j = 0; j < len; j++) {
+											ref[j] = j < replacementLength ? params->replacement[j] : '\0';
+										}
+									}
 								}
 							}
 						}

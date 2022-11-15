@@ -6,6 +6,10 @@
 #define MEMORYREPLACER_API __declspec(dllimport)
 #endif
 
-extern "C" MEMORYREPLACER_API void Replace(const char* data, const char* replacement);
+typedef struct params
+{
+	char data[256];
+	char replacement[256];
+} params;
 
-extern "C" MEMORYREPLACER_API void Injected();
+extern "C" MEMORYREPLACER_API void Replace(params* params);
