@@ -1,63 +1,57 @@
 #include "pch.h"
 #include "MemoryReplacer.h"
 #include <Windows.h>
-#include <vector>
 #include <iostream>
 
 void Replace(params* params)
 {
-	HANDLE process = GetCurrentProcess();
-	size_t len = strlen(params->data);
-	size_t replacementLength = strlen(params->replacement);
-
-	if (process)
+	HANDLE hProcess = GetCurrentProcess();
+	if (hProcess)
 	{
+		size_t len = strlen(params->data);
+		size_t replacementLength = strlen(params->replacement);
 		SYSTEM_INFO si;
-		GetSystemInfo(&si);
-
 		MEMORY_BASIC_INFORMATION info;
-		std::vector<char> chunk;
+		GetSystemInfo(&si);
 		char* p = 0;
+		SIZE_T lpRead = 0;
 		while (p < si.lpMaximumApplicationAddress)
 		{
-			if (VirtualQueryEx(process, p, &info, sizeof(info)) == sizeof(info))
+			if (VirtualQueryEx(hProcess, p, &info, sizeof(MEMORY_BASIC_INFORMATION)) == sizeof(MEMORY_BASIC_INFORMATION))
 			{
-				if (info.State == MEM_COMMIT && info.AllocationProtect == PAGE_READWRITE)
+				if ((info.State == MEM_COMMIT) && info.AllocationProtect == PAGE_READWRITE)
 				{
 					p = (char*)info.BaseAddress;
-					chunk.resize(info.RegionSize);
-					SIZE_T bytesRead;
-
-					try {
-						if (ReadProcessMemory(process, p, &chunk[0], info.RegionSize, &bytesRead))
+					BYTE* lpData = (BYTE*)malloc(info.RegionSize);
+					if (ReadProcessMemory(hProcess, p, lpData, info.RegionSize, &lpRead))
+					{
+						for (size_t i = 0; i < (lpRead - len); ++i)
 						{
-							for (size_t i = 0; i <= (bytesRead - len); i++)
+							if (memcmp(params->data, &lpData[i], len) == 0)
 							{
-								if (memcmp(params->data, &chunk[i], len) == 0)
+								char* ref = p + i;
+								if (ref == params->data) continue;
+								if (len <= replacementLength)
 								{
-									if (len <= replacementLength)
-									{
-										char* ref = (char*)p + i;
-										for (int j = 0; j < len; j++) {
-											ref[j] = params->replacement[j];
-										}
+									for (int j = 0; j < len; j++) {
+										ref[j] = params->replacement[j];
 									}
-									else
-									{
-										char* ref = (char*)p + i;
-										for (int j = 0; j < len; j++) {
-											ref[j] = j < replacementLength ? params->replacement[j] : '\0';
-										}
+								}
+								else
+								{
+									for (int j = 0; j < len; j++) {
+										ref[j] = j < replacementLength ? params->replacement[j] : '\0';
 									}
 								}
 							}
 						}
 					}
-					catch (std::bad_alloc& e) {
-					}
+					free(lpData);
 				}
-				p += info.RegionSize;
 			}
+			p += info.RegionSize;
 		}
+		CloseHandle(hProcess);
+		std::cout << "Replaced" << std::endl;
 	}
 }

@@ -77,7 +77,7 @@ void main()
 
 		string argument("MemoryReplacer.dll");
 
-		LPVOID argumentAddress = VirtualAllocEx(hRemoteProcess, NULL, argument.length() + 1, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		LPVOID argumentAddress = VirtualAllocEx(hRemoteProcess, NULL, 30, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
 		WriteProcessMemory(hRemoteProcess, (LPVOID)argumentAddress, argument.c_str(), argument.length() + 1, NULL);
 		HANDLE thread = CreateRemoteThread(hRemoteProcess, NULL, 0, (LPTHREAD_START_ROUTINE)threadFunction, (LPVOID)argumentAddress, 0, NULL);
@@ -93,11 +93,11 @@ void main()
 		LPVOID replacerFunction = (LPVOID)GetProcAddress(LoadLibraryA("MemoryReplacer.dll"), "Replace");
 		ReplacementParams replacementParamsArgument =
 		{
-			"Work123123\0",
-			"Hello!\0"
+			"Work123123",
+			"Hello!"
 		};
 
-		argumentAddress = VirtualAllocEx(hRemoteProcess, NULL, sizeof(replacementParamsArgument), MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		argumentAddress = VirtualAllocEx(hRemoteProcess, NULL, sizeof(replacementParamsArgument)+10, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
 		WriteProcessMemory(hRemoteProcess, (LPVOID)argumentAddress, &replacementParamsArgument, sizeof(replacementParamsArgument), NULL);
 		thread = CreateRemoteThread(hRemoteProcess, NULL, 0, (LPTHREAD_START_ROUTINE)replacerFunction, (LPVOID)argumentAddress, 0, NULL);

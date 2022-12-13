@@ -1,3 +1,6 @@
-﻿  MemoryReplacer.cpp
-C:\University\OSISP\OsispLab3\MemoryReplacer\MemoryReplacer.cpp(63,29): warning C4101: 'e': unreferenced local variable
+﻿  pch.cpp
+  dllmain.cpp
+  MemoryReplacer.cpp
+  Generating Code...
+     Creating library C:\University\OSISP\OsispLab3\x64\Debug\MemoryReplacer.lib and object C:\University\OSISP\OsispLab3\x64\Debug\MemoryReplacer.exp
   MemoryReplacer.vcxproj -> C:\University\OSISP\OsispLab3\x64\Debug\MemoryReplacer.dll
